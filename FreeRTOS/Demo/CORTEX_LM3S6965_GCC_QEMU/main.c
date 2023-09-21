@@ -19,6 +19,7 @@
 #include "osram128x64x4.h"
 #include "uart.h"
 
+
 /*-----------------------------------------------------------*/
 
 /* The time between cycles of the 'check' functionality (defined within the
@@ -26,7 +27,7 @@ tick hook. */
 #define mainCHECK_DELAY						( ( TickType_t ) 5000 / portTICK_PERIOD_MS )
 
 /* Task stack sizes. */
-#define mainOLED_TASK_STACK_SIZE			( configMINIMAL_STACK_SIZE + 40 )
+#define STOCK_STACK_SIZE			( configMINIMAL_STACK_SIZE + 40 )
 
 /* The period of the system clock in nano seconds.  This is used to calculate
 the jitter time in nano seconds. */
@@ -44,7 +45,12 @@ the jitter time in nano seconds. */
 /*
  * Display Task
  */
-static void prvOLEDTask( void *pvParameters );
+static void OLEDTask( void *pvParameters );
+
+/*
+ * Serial Task
+ */
+static void SerialTask( void *pvParameters );
 
 /*
  * Configure the hardware for the demo.
@@ -63,7 +69,9 @@ int main( void )
 	prvSetupHardware();
 
 	/* Start the tasks defined within this file/specific to this demo. */
-	xTaskCreate( prvOLEDTask, "OLED", mainOLED_TASK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
+	xTaskCreate( OLEDTask, "OLED", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
+	xTaskCreate( SerialTask, "Serial", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
+
 
 	/* Start the scheduler. */
 	vTaskStartScheduler();
@@ -85,6 +93,10 @@ void prvSetupHardware( void )
 
 	/* Set the clocking to run from the PLL at 50 MHz */
 	SysCtlClockSet( SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_8MHZ );
+
+	// Enable UART
+	SysCtlPeripheralEnable( SYSCTL_PERIPH_UART0 );
+	UARTEnable( UART0_BASE );
 }
 
 void vApplicationTickHook( void )
@@ -93,15 +105,32 @@ void vApplicationTickHook( void )
 }
 /*-----------------------------------------------------------*/
 
-void prvOLEDTask( void *pvParameters )
+void SerialTask( void *pvParameters )
+{
+	/* Prevent warnings about unused parameters. */
+	( void ) pvParameters;
+
+	static char c;
+	unsigned long i = 0;
+
+	// Continuous read and print back to serial
+	while (1)
+	{
+		if (UARTCharsAvail(UART0_BASE)) {
+			c = UARTCharGet(UART0_BASE);
+			UARTCharPut(UART0_BASE, c);
+
+			OSRAM128x64x4StringDraw(&c, 6*(i % 21), i/21 * 8, 0xF, 0);
+			i++;
+		}
+	}
+}
+
+void OLEDTask( void *pvParameters )
 {
 /* Functions to access the OLED.  The one used depends on the dev kit
 being used. */
 void ( *vOLEDInit )( uint32_t ) = NULL;
-void ( *vOLEDStringDraw )( const char *, uint32_t, uint32_t, unsigned char, unsigned char ) = NULL;
-void ( *vOLEDImageDraw )( const unsigned char *, uint32_t, uint32_t, uint32_t, uint32_t, unsigned char ) = NULL;
-void ( *vOLEDPixelDraw )( uint32_t, uint32_t, unsigned char,  unsigned char);
-void ( *vOLEDRectangleDraw )( uint32_t, uint32_t, uint32_t, uint32_t, unsigned char,  unsigned char);
 	/* Prevent warnings about unused parameters. */
 	( void ) pvParameters;
 
@@ -109,16 +138,10 @@ void ( *vOLEDRectangleDraw )( uint32_t, uint32_t, uint32_t, uint32_t, unsigned c
 	for the evaluation kit being used. */
 	configASSERT( ( HWREG( SYSCTL_DID1 ) & SYSCTL_DID1_PRTNO_MASK ) == SYSCTL_DID1_PRTNO_6965 );
 	vOLEDInit = OSRAM128x64x4Init;
-	vOLEDStringDraw = OSRAM128x64x4StringDraw;
-	vOLEDImageDraw = OSRAM128x64x4ImageDraw;
-	vOLEDPixelDraw = OSRAM128x64x4PixelDraw;
-	vOLEDRectangleDraw = OSRAM128x64x4RectangleDraw;
 
-	/* Initialise the OLED and display a startup message. */
+	/* Initialise the OLED */
 	vOLEDInit( ulSSI_FREQUENCY );
-	unsigned char c[2] = {0xAB, 0xCD};
-	vOLEDImageDraw(c, 0, 0, 2, 2, 1);
-	OSRAM128x64x4SwapBuffer();
+	vTaskDelete(NULL);
 }
 
 /*-----------------------------------------------------------*/
