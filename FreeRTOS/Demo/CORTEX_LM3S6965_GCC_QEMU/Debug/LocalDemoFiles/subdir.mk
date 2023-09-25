@@ -4,13 +4,19 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../LocalDemoFiles/osram128x64x4.c 
+../LocalDemoFiles/display.c \
+../LocalDemoFiles/osram128x64x4.c \
+../LocalDemoFiles/serial.c 
 
 OBJS += \
-./LocalDemoFiles/osram128x64x4.o 
+./LocalDemoFiles/display.o \
+./LocalDemoFiles/osram128x64x4.o \
+./LocalDemoFiles/serial.o 
 
 C_DEPS += \
-./LocalDemoFiles/osram128x64x4.d 
+./LocalDemoFiles/display.d \
+./LocalDemoFiles/osram128x64x4.d \
+./LocalDemoFiles/serial.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

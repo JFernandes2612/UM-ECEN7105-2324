@@ -16,9 +16,12 @@
 #include "sysctl.h"
 #include "gpio.h"
 #include "grlib.h"
-#include "osram128x64x4.h"
 #include "uart.h"
 
+#include "osram128x64x4.h"
+#include "serial.h"
+#include "state.h"
+#include "display.h"
 
 /*-----------------------------------------------------------*/
 
@@ -33,19 +36,14 @@ tick hook. */
 the jitter time in nano seconds. */
 #define mainNS_PER_CLOCK					( ( uint32_t ) ( ( 1.0 / ( double ) configCPU_CLOCK_HZ ) * 1000000000.0 ) )
 
-/* Constants used when writing strings to the display. */
-#define mainCHARACTER_HEIGHT				( 9 )
-#define mainMAX_ROWS_128					( mainCHARACTER_HEIGHT * 14 )
-#define mainMAX_ROWS_96						( mainCHARACTER_HEIGHT * 10 )
-#define mainMAX_ROWS_64						( mainCHARACTER_HEIGHT * 7 )
 #define ulSSI_FREQUENCY						( 3500000UL )
 
 /*-----------------------------------------------------------*/
 
 /*
- * Display Task
+ * Display Refresh Task
  */
-static void OLEDTask( void *pvParameters );
+static void RefreshDisplayTask( void *pvParameters );
 
 /*
  * Serial Task
@@ -69,8 +67,8 @@ int main( void )
 	prvSetupHardware();
 
 	/* Start the tasks defined within this file/specific to this demo. */
-	xTaskCreate( OLEDTask, "OLED", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
 	xTaskCreate( SerialTask, "Serial", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
+	xTaskCreate( RefreshDisplayTask, "RefreshDisplay", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL);
 
 
 	/* Start the scheduler. */
@@ -97,6 +95,13 @@ void prvSetupHardware( void )
 	// Enable UART
 	SysCtlPeripheralEnable( SYSCTL_PERIPH_UART0 );
 	UARTEnable( UART0_BASE );
+
+	/* Map the OLED access functions to the driver functions that are appropriate
+	for the evaluation kit being used. */
+	configASSERT( ( HWREG( SYSCTL_DID1 ) & SYSCTL_DID1_PRTNO_MASK ) == SYSCTL_DID1_PRTNO_6965 );
+
+	/* Initialise the OLED */
+	OSRAM128x64x4Init( ulSSI_FREQUENCY );
 }
 
 void vApplicationTickHook( void )
@@ -110,39 +115,60 @@ void SerialTask( void *pvParameters )
 	/* Prevent warnings about unused parameters. */
 	( void ) pvParameters;
 
-	static char c;
-	unsigned long i = 0;
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = pdMS_TO_TICKS(1);
+
+	xLastWakeTime = xTaskGetTickCount();
 
 	// Continuous read and print back to serial
-	while (1)
+	for (;;)
 	{
-		if (UARTCharsAvail(UART0_BASE)) {
-			c = UARTCharGet(UART0_BASE);
-			UARTCharPut(UART0_BASE, c);
+		// Wait for the next cycle.
+		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 
-			OSRAM128x64x4StringDraw(&c, 6*(i % 21), i/21 * 8, 0xF, 0);
-			i++;
+		if (s == SCREEN_TYPE)
+		{
+			printSerial();
+		}
+		else if (s == MOUSE)
+		{
+			moveMouse();
 		}
 	}
 }
 
-void OLEDTask( void *pvParameters )
+void RefreshDisplayTask( void *pvParameters )
 {
-/* Functions to access the OLED.  The one used depends on the dev kit
-being used. */
-void ( *vOLEDInit )( uint32_t ) = NULL;
 	/* Prevent warnings about unused parameters. */
 	( void ) pvParameters;
 
-	/* Map the OLED access functions to the driver functions that are appropriate
-	for the evaluation kit being used. */
-	configASSERT( ( HWREG( SYSCTL_DID1 ) & SYSCTL_DID1_PRTNO_MASK ) == SYSCTL_DID1_PRTNO_6965 );
-	vOLEDInit = OSRAM128x64x4Init;
+	{
+		TickType_t xLastWakeTime;
+		const TickType_t xFrequency = pdMS_TO_TICKS(16); // ~60fps
 
-	/* Initialise the OLED */
-	vOLEDInit( ulSSI_FREQUENCY );
-	vTaskDelete(NULL);
+		// Initialise the xLastWakeTime variable with the current time.
+		xLastWakeTime = xTaskGetTickCount();
+
+		for (;;)
+		{
+			// Wait for the next cycle.
+			xTaskDelayUntil( &xLastWakeTime, xFrequency );
+
+			if (s == SCREEN_TYPE)
+			{
+				printScreanType();
+			}
+			else if (s == MOUSE)
+			{
+				printMouse();
+			}
+
+
+			OSRAM128x64x4SwapBuffer();
+		}
+	}
 }
+
 
 /*-----------------------------------------------------------*/
 

@@ -34,6 +34,9 @@
 // Prototypes for the driver APIs.
 //
 //*****************************************************************************
+#define OSRAM128x64x4WIDTH 128
+#define OSRAM128x64x4HEIGHT 64
+
 extern void OSRAM128x64x4Clear(void);
 extern void OSRAM128x64x4StringDraw(const char *pcStr,
                                     unsigned long ulX,
