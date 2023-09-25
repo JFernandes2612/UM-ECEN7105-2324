@@ -5,9 +5,9 @@
  *      Author: jelao
  */
 
+#include <globals.h>
 #include "display.h"
 #include "serial.h"
-
 #include "osram128x64x4.h"
 
 void printScreanType()
@@ -24,4 +24,17 @@ void printScreanType()
 void printMouse()
 {
 	OSRAM128x64x4PixelDraw(mouse.x % OSRAM128x64x4WIDTH, mouse.y % OSRAM128x64x4HEIGHT, 0xF, 1);
+}
+
+void printMenu()
+{
+	switch (menu)
+	{
+		case SCREEN_TYPE_SELECTION:
+			OSRAM128x64x4StringDraw("Screen Type Mode", 0, 0, 0xF, 1);
+			break;
+		case MOUSE_SELECTION:
+			OSRAM128x64x4StringDraw("Mouse Mode", 0, 0, 0xF, 1);
+			break;
+	}
 }

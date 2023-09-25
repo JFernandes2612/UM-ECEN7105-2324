@@ -14,6 +14,6 @@ enum State {
 	MOUSE,
 };
 
-static enum State s = MOUSE;
+extern enum State state;
 
 #endif /* LOCALDEMOFILES_STATE_H_ */

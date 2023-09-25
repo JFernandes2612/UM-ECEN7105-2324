@@ -12,4 +12,6 @@ void printScreanType();
 
 void printMouse();
 
+void printMenu();
+
 #endif /* LOCALDEMOFILES_DISPLAY_H_ */

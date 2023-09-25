@@ -8,16 +8,22 @@
 #ifndef LOCALDEMOFILES_SERIAL_H_
 #define LOCALDEMOFILES_SERIAL_H_
 
-struct Mouse {
-	unsigned char x, y;
+enum Direction {
+	Up,
+	Down,
+	Right,
+	Left,
+	Enter,
+	Esc,
+	None,
 };
 
-extern struct Mouse mouse;
-
-extern char serialBuffer[1024];
+enum Direction getSpecialKey();
 
 void printSerial();
 
 void moveMouse();
+
+void interactMenu();
 
 #endif /* LOCALDEMOFILES_SERIAL_H_ */

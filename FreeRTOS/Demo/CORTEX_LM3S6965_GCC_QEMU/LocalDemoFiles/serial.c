@@ -12,9 +12,8 @@
 
 #include "uart.h"
 
-char serialBuffer[1024] = {0};
-
-struct Mouse mouse = {0, 0};
+#include <globals.h>
+#include "state.h"
 
 void printSerial()
 {
@@ -25,6 +24,18 @@ void printSerial()
 		c = UARTCharGet(UART0_BASE);
 
 		UARTCharPut(UART0_BASE, c);
+
+		if (c == 0x1B)
+		{
+			state = 0;
+			while (i > 0)
+			{
+				serialBuffer[i] = 0;
+				i--;
+			}
+			serialBuffer[i] = 0;
+			break;
+		}
 
 		if (c == 0x08)
 		{
@@ -46,7 +57,7 @@ void printSerial()
 	}
 }
 
-void moveMouse()
+enum Direction getSpecialKey()
 {
 	static char c;
 	long counter = 0;
@@ -56,43 +67,105 @@ void moveMouse()
 	while (UARTCharsAvail(UART0_BASE) && counter < 3) {
 		c = UARTCharGet(UART0_BASE);
 
+		if (c == 0x0D)
+		{
+			return Enter;
+		}
 
 		if (!error){
 			switch (counter) {
 				case 0:
 				{
-					if (c != 0x1b)
-						error = 1;
+					if (c != 0x1B)
+						return None;
 					break;
 				}
 				case 1:
 				{
 					if (c != '[')
-						error = 1;
+						return None;
 					break;
 				}
 				case 2:
 				{
 					switch (c) {
 						case 'A':
-							mouse.y -= 1;
-							break;
+							return Up;
 						case 'B':
-							mouse.y += 1;
-							break;
+							return Down;
 						case 'C':
-							mouse.x += 1;
-							break;
+							return Right;
 						case 'D':
-							mouse.x -= 1;
-							break;
+							return Left;
 						default:
-							error = 1;
-							break;
+							return None;
 					}
 				}
 			}
 			counter++;
 		}
 	}
+
+	if (c == 0x1B)
+		return Esc;
+
+	return None;
+}
+
+void moveMouse()
+{
+	const enum Direction d = getSpecialKey();
+
+	switch (d)
+	{
+		case Up:
+			mouse.y -= 1;
+			break;
+		case Down:
+			mouse.y += 1;
+			break;
+		case Right:
+			mouse.x += 1;
+			break;
+		case Left:
+			mouse.x -= 1;
+			break;
+		case Esc:
+			state = 0;
+			mouse.x = 0;
+			mouse.y = 0;
+			break;
+		default:
+			break;
+	}
+}
+
+void interactMenu()
+{
+	const enum Direction d = getSpecialKey();
+
+	char changeState = false;
+
+	switch (d)
+	{
+		case Up:
+			menu -= 1;
+			break;
+		case Down:
+			menu += 1;
+			break;
+		case Enter:
+			changeState = true;
+			break;
+		case Esc:
+			state = 0;
+			break;
+		default:
+			break;
+	}
+
+	menu %= 2;
+
+	if (changeState)
+		state = menu + 1;
 }

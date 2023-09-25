@@ -126,13 +126,17 @@ void SerialTask( void *pvParameters )
 		// Wait for the next cycle.
 		xTaskDelayUntil( &xLastWakeTime, xFrequency );
 
-		if (s == SCREEN_TYPE)
+		if (state == SCREEN_TYPE)
 		{
 			printSerial();
 		}
-		else if (s == MOUSE)
+		else if (state == MOUSE)
 		{
 			moveMouse();
+		}
+		else if (state == MENU)
+		{
+			interactMenu();
 		}
 	}
 }
@@ -154,13 +158,17 @@ void RefreshDisplayTask( void *pvParameters )
 			// Wait for the next cycle.
 			xTaskDelayUntil( &xLastWakeTime, xFrequency );
 
-			if (s == SCREEN_TYPE)
+			if (state == SCREEN_TYPE)
 			{
 				printScreanType();
 			}
-			else if (s == MOUSE)
+			else if (state == MOUSE)
 			{
 				printMouse();
+			}
+			else if (state == MENU)
+			{
+				printMenu();
 			}
 
 
