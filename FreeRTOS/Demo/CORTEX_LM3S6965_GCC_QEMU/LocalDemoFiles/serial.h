@@ -8,7 +8,7 @@
 #ifndef LOCALDEMOFILES_SERIAL_H_
 #define LOCALDEMOFILES_SERIAL_H_
 
-enum Direction {
+enum SpecialKey {
 	Up,
 	Down,
 	Right,
@@ -18,12 +18,14 @@ enum Direction {
 	None,
 };
 
-enum Direction getSpecialKey();
+enum SpecialKey getSpecialKey();
 
-void printSerial();
+void defaultSerial();
 
 void moveMouse();
 
 void interactMenu();
+
+void interactWorkers();
 
 #endif /* LOCALDEMOFILES_SERIAL_H_ */

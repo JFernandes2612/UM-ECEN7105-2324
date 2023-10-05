@@ -5,8 +5,6 @@
 /* Scheduler includes. */
 #include "FreeRTOS.h"
 #include "task.h"
-#include "queue.h"
-#include "semphr.h"
 
 /* Hardware library includes. */
 #include "hw_memmap.h"
@@ -18,27 +16,10 @@
 #include "grlib.h"
 #include "uart.h"
 
+#include <globals.h>
 #include "osram128x64x4.h"
 #include "serial.h"
-#include "state.h"
 #include "display.h"
-
-/*-----------------------------------------------------------*/
-
-/* The time between cycles of the 'check' functionality (defined within the
-tick hook. */
-#define mainCHECK_DELAY						( ( TickType_t ) 5000 / portTICK_PERIOD_MS )
-
-/* Task stack sizes. */
-#define STOCK_STACK_SIZE			( configMINIMAL_STACK_SIZE + 40 )
-
-/* The period of the system clock in nano seconds.  This is used to calculate
-the jitter time in nano seconds. */
-#define mainNS_PER_CLOCK					( ( uint32_t ) ( ( 1.0 / ( double ) configCPU_CLOCK_HZ ) * 1000000000.0 ) )
-
-#define ulSSI_FREQUENCY						( 3500000UL )
-
-/*-----------------------------------------------------------*/
 
 /*
  * Display Refresh Task
@@ -67,8 +48,8 @@ int main( void )
 	prvSetupHardware();
 
 	/* Start the tasks defined within this file/specific to this demo. */
-	xTaskCreate( SerialTask, "Serial", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
-	xTaskCreate( RefreshDisplayTask, "RefreshDisplay", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL);
+	xTaskCreate( SerialTask, "Serial", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL );
+	xTaskCreate( RefreshDisplayTask, "RefreshDisplay", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL);
 
 
 	/* Start the scheduler. */
@@ -128,7 +109,7 @@ void SerialTask( void *pvParameters )
 
 		if (state == SCREEN_TYPE)
 		{
-			printSerial();
+			defaultSerial();
 		}
 		else if (state == MOUSE)
 		{
@@ -137,6 +118,10 @@ void SerialTask( void *pvParameters )
 		else if (state == MENU)
 		{
 			interactMenu();
+		}
+		else if (state == WORKERS)
+		{
+			interactWorkers();
 		}
 	}
 }
@@ -169,6 +154,10 @@ void RefreshDisplayTask( void *pvParameters )
 			else if (state == MENU)
 			{
 				printMenu();
+			}
+			else if (state == WORKERS)
+			{
+				printWorkers();
 			}
 
 

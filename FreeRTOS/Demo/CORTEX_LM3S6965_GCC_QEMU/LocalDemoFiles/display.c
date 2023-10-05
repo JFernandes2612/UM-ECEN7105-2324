@@ -5,6 +5,8 @@
  *      Author: jelao
  */
 
+#include <stdio.h>
+
 #include <globals.h>
 #include "display.h"
 #include "serial.h"
@@ -28,13 +30,51 @@ void printMouse()
 
 void printMenu()
 {
+	OSRAM128x64x4StringDraw("Main Menu", 0, 0, 0xF, 1);
+
 	switch (menu)
 	{
 		case SCREEN_TYPE_SELECTION:
-			OSRAM128x64x4StringDraw("Screen Type Mode", 0, 0, 0xF, 1);
+			OSRAM128x64x4StringDraw("Screen Type Mode", 0, 15, 0xF, 1);
 			break;
 		case MOUSE_SELECTION:
-			OSRAM128x64x4StringDraw("Mouse Mode", 0, 0, 0xF, 1);
+			OSRAM128x64x4StringDraw("Mouse Mode", 0, 15, 0xF, 1);
 			break;
+		case WORKERS_SELECTION:
+			OSRAM128x64x4StringDraw("Workers Mode", 0, 15, 0xF, 1);
+			break;
+	}
+}
+
+
+void printWorkers()
+{
+	OSRAM128x64x4StringDraw("Workers", 0, 0, 0xF, 1);
+
+	OSRAM128x64x4StringDraw("Worker 1", 65, 8, 0xF, 1);
+
+	OSRAM128x64x4StringDraw("Worker 2", 65, 28, 0xF, 1);
+
+	OSRAM128x64x4StringDraw("Worker 3", 65, 48, 0xF, 1);
+
+	OSRAM128x64x4StringDraw(serialBuffer, 10, 32, 0xF, 1);
+
+	char s[4];
+
+	sprintf(s, "%d", current_timer_1);
+	OSRAM128x64x4StringDraw(s, 65, 16, 0xF, 1);
+
+	sprintf(s, "%d", current_timer_2);
+	OSRAM128x64x4StringDraw(s, 65, 36, 0xF, 1);
+
+	sprintf(s, "%d", current_timer_3);
+	OSRAM128x64x4StringDraw(s, 65, 56, 0xF, 1);
+
+	char nextUp[9];
+	unsigned int nextUpVal;
+	if (xQueuePeek(workersQueue, &nextUpVal, ( TickType_t ) 0) == pdPASS)
+	{
+		sprintf(nextUp, "Next-%d", nextUpVal);
+		OSRAM128x64x4StringDraw(nextUp, 0, 12, 0xF, 1);
 	}
 }

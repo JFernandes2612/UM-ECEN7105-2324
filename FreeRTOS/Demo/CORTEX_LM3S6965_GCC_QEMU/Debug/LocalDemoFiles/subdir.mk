@@ -8,21 +8,21 @@ C_SRCS += \
 ../LocalDemoFiles/globals.c \
 ../LocalDemoFiles/osram128x64x4.c \
 ../LocalDemoFiles/serial.c \
-../LocalDemoFiles/state.c 
+../LocalDemoFiles/worker.c 
 
 OBJS += \
 ./LocalDemoFiles/display.o \
 ./LocalDemoFiles/globals.o \
 ./LocalDemoFiles/osram128x64x4.o \
 ./LocalDemoFiles/serial.o \
-./LocalDemoFiles/state.o 
+./LocalDemoFiles/worker.o 
 
 C_DEPS += \
 ./LocalDemoFiles/display.d \
 ./LocalDemoFiles/globals.d \
 ./LocalDemoFiles/osram128x64x4.d \
 ./LocalDemoFiles/serial.d \
-./LocalDemoFiles/state.d 
+./LocalDemoFiles/worker.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

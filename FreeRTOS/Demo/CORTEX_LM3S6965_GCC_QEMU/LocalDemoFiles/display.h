@@ -14,4 +14,6 @@ void printMouse();
 
 void printMenu();
 
+void printWorkers();
+
 #endif /* LOCALDEMOFILES_DISPLAY_H_ */

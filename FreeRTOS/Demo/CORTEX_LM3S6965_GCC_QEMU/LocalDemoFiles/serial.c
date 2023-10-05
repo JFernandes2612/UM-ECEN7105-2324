@@ -4,6 +4,9 @@
  *  Created on: 25 Sept 2023
  *      Author: jelao
  */
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
 
 #include "serial.h"
 
@@ -12,10 +15,11 @@
 
 #include "uart.h"
 
-#include <globals.h>
-#include "state.h"
+#include "globals.h"
 
-void printSerial()
+#include "worker.h"
+
+void defaultSerial()
 {
 	static char c;
 	static long i = 0;
@@ -57,7 +61,7 @@ void printSerial()
 	}
 }
 
-enum Direction getSpecialKey()
+enum SpecialKey getSpecialKey()
 {
 	static char c;
 	long counter = 0;
@@ -114,7 +118,7 @@ enum Direction getSpecialKey()
 
 void moveMouse()
 {
-	const enum Direction d = getSpecialKey();
+	const enum SpecialKey d = getSpecialKey();
 
 	switch (d)
 	{
@@ -140,9 +144,66 @@ void moveMouse()
 	}
 }
 
+void interactWorkers()
+{
+	static char c;
+	static long i = 0;
+
+	while (UARTCharsAvail(UART0_BASE)) {
+		c = UARTCharGet(UART0_BASE);
+
+		if (c == 0x0D)
+		{
+			if (i > 0)
+			{
+				int x = atoi(serialBuffer);
+				xQueueSendToBack(workersQueue, &x, ( TickType_t ) 0 );
+			}
+			continue;
+		}
+
+		if (c == 0x1B)
+		{
+			state = 0;
+			while (i > 0)
+			{
+				serialBuffer[i] = 0;
+				i--;
+			}
+			serialBuffer[i] = 0;
+			stopWorkers();
+			break;
+		}
+
+		if ((i < 3 && (isdigit(c) || c == 0x08)) || (i == 3 && c == 0x08))
+			UARTCharPut(UART0_BASE, c);
+
+		if (c == 0x08)
+		{
+			if (i == 0)
+				return;
+
+			c = ' ';
+			UARTCharPut(UART0_BASE, c);
+			UARTCharPut(UART0_BASE, 0x08);
+
+			i--;
+			serialBuffer[i] = 0;
+		}
+		else
+		{
+			if (i < 3 && isdigit(c))
+			{
+				serialBuffer[i] = c;
+				i++;
+			}
+		}
+	}
+}
+
 void interactMenu()
 {
-	const enum Direction d = getSpecialKey();
+	const enum SpecialKey d = getSpecialKey();
 
 	char changeState = false;
 
@@ -164,8 +225,15 @@ void interactMenu()
 			break;
 	}
 
-	menu %= 2;
+	menu %= numberOfMenuStates;
 
 	if (changeState)
+	{
 		state = menu + 1;
+
+		if (state == WORKERS)
+		{
+			initWorkers();
+		}
+	}
 }
