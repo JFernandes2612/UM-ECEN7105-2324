@@ -11,7 +11,9 @@ LocalDemoFiles/worker.o: ../LocalDemoFiles/worker.c \
  C:\FreeRTOSv202212.01\FreeRTOS\Source\include/list.h \
  C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h \
  C:\FreeRTOSv202212.01\FreeRTOS\Source\include/task.h \
- ../LocalDemoFiles/globals.h
+ ../LocalDemoFiles/globals.h \
+ C:\FreeRTOSv202212.01\FreeRTOS\Source\include/semphr.h \
+ C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h
 ../LocalDemoFiles/worker.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Source\include/FreeRTOS.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Demo\CORTEX_LM3S6965_GCC_QEMU/FreeRTOSConfig.h:
@@ -25,3 +27,5 @@ C:\FreeRTOSv202212.01\FreeRTOS\Source\include/list.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Source\include/task.h:
 ../LocalDemoFiles/globals.h:
+C:\FreeRTOSv202212.01\FreeRTOS\Source\include/semphr.h:
+C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h:

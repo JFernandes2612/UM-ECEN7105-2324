@@ -58,7 +58,7 @@
 
 #define configMAX_PRIORITIES			( 6UL )
 #define configQUEUE_REGISTRY_SIZE		10
-#define configSUPPORT_STATIC_ALLOCATION	1
+#define configSUPPORT_DYNAMIC_ALLOCATION 1
 
 /* Timer related defines. */
 #define configUSE_TIMERS				1

@@ -16,7 +16,7 @@
 #include "grlib.h"
 #include "uart.h"
 
-#include <globals.h>
+#include "globals.h"
 #include "osram128x64x4.h"
 #include "serial.h"
 #include "display.h"
@@ -48,8 +48,8 @@ int main( void )
 	prvSetupHardware();
 
 	/* Start the tasks defined within this file/specific to this demo. */
-	xTaskCreate( SerialTask, "Serial", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL );
-	xTaskCreate( RefreshDisplayTask, "RefreshDisplay", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL);
+	xTaskCreate( SerialTask, "Serial", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
+	xTaskCreate( RefreshDisplayTask, "RefreshDisplay", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL);
 
 
 	/* Start the scheduler. */
@@ -76,6 +76,7 @@ void prvSetupHardware( void )
 	// Enable UART
 	SysCtlPeripheralEnable( SYSCTL_PERIPH_UART0 );
 	UARTEnable( UART0_BASE );
+	cleanSerial();
 
 	/* Map the OLED access functions to the driver functions that are appropriate
 	for the evaluation kit being used. */
@@ -138,6 +139,8 @@ void RefreshDisplayTask( void *pvParameters )
 		// Initialise the xLastWakeTime variable with the current time.
 		xLastWakeTime = xTaskGetTickCount();
 
+		displayS = xSemaphoreCreateMutex();
+
 		for (;;)
 		{
 			// Wait for the next cycle.
@@ -159,7 +162,6 @@ void RefreshDisplayTask( void *pvParameters )
 			{
 				printWorkers();
 			}
-
 
 			OSRAM128x64x4SwapBuffer();
 		}

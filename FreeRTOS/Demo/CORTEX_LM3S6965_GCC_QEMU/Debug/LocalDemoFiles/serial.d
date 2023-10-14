@@ -15,6 +15,8 @@ LocalDemoFiles/serial.o: ../LocalDemoFiles/serial.c \
  C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h \
  C:\FreeRTOSv202212.01\FreeRTOS\Source\include/task.h \
  C:\FreeRTOSv202212.01\FreeRTOS\Source\include/list.h \
+ C:\FreeRTOSv202212.01\FreeRTOS\Source\include/semphr.h \
+ C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h \
  ../LocalDemoFiles/worker.h
 ../LocalDemoFiles/serial.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Demo\Common\drivers\LuminaryMicro/hw_memmap.h:
@@ -32,4 +34,6 @@ C:\FreeRTOSv202212.01\FreeRTOS\Source\include/mpu_wrappers.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Source\include/task.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Source\include/list.h:
+C:\FreeRTOSv202212.01\FreeRTOS\Source\include/semphr.h:
+C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h:
 ../LocalDemoFiles/worker.h:

@@ -7,6 +7,8 @@
 
 #include "globals.h"
 
+SemaphoreHandle_t displayS = NULL;
+
 enum State state = MENU;
 
 char serialBuffer[1024] = {0};
@@ -22,3 +24,5 @@ QueueHandle_t workersQueue = NULL;
 unsigned int current_timer_1 = 0;
 unsigned int current_timer_2 = 0;
 unsigned int current_timer_3 = 0;
+
+

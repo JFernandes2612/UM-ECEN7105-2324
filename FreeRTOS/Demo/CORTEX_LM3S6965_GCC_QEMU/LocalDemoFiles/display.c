@@ -16,10 +16,13 @@ void printScreanType()
 {
 	long int i = 0;
 	// Write line to line
-	while (serialBuffer[i])
-	{
-		OSRAM128x64x4StringDraw(serialBuffer + i, 0, i/21 * 8, 0xF, 1);
-		i += 21;
+	if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+		while (serialBuffer[i])
+		{
+			OSRAM128x64x4StringDraw(serialBuffer + i, 0, i/21 * 8, 0xF, 1);
+			i += 21;
+		}
+		xSemaphoreGive(displayS);
 	}
 }
 
@@ -57,7 +60,10 @@ void printWorkers()
 
 	OSRAM128x64x4StringDraw("Worker 3", 65, 48, 0xF, 1);
 
-	OSRAM128x64x4StringDraw(serialBuffer, 10, 32, 0xF, 1);
+	if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+		OSRAM128x64x4StringDraw(serialBuffer, 10, 32, 0xF, 1);
+		xSemaphoreGive(displayS);
+	}
 
 	char s[4];
 

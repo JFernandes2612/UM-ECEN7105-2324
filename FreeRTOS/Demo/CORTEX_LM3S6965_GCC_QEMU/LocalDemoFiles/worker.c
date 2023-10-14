@@ -57,16 +57,19 @@ void WorkerTask( void *pvParameters )
 			int x;
 			if (xQueueReceive(workersQueue, &x, ( TickType_t ) 0 ) == pdPASS)
 			{
-				*timer = x;
-				working = 1;
-				xLastWakeTime = xTaskGetTickCount();
+				if (x != 0)
+				{
+					*timer = x;
+					working = 1;
+					xLastWakeTime = xTaskGetTickCount();
+				}
 			}
 		}
 
 		while (working) {
 			xTaskDelayUntil( &xLastWakeTime, secondFrequency );
 			*timer -= 1;
-			if (*timer == 0)
+			if (*timer <= 0)
 				working = 0;
 		}
 	}
@@ -86,6 +89,10 @@ void stopWorkers()
 	vTaskDelete( xHandleWorker1 );
 	vTaskDelete( xHandleWorker2 );
 	vTaskDelete( xHandleWorker3 );
+
+	current_timer_1 = 0;
+	current_timer_2 = 0;
+	current_timer_3 = 0;
 
 	vQueueDelete(workersQueue);
 }

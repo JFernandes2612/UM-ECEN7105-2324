@@ -10,6 +10,7 @@
 
 #include "FreeRTOS.h"
 #include "queue.h"
+#include "semphr.h"
 
 /*-----------------------------------------------------------*/
 
@@ -27,6 +28,10 @@ the jitter time in nano seconds. */
 #define ulSSI_FREQUENCY						( 3500000UL )
 
 /*-----------------------------------------------------------*/
+
+// MUTEX
+
+extern SemaphoreHandle_t displayS;
 
 // STATE
 enum State {

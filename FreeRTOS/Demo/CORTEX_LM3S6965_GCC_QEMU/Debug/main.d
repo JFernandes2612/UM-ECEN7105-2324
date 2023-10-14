@@ -20,6 +20,8 @@ main.o: ../main.c \
  C:\FreeRTOSv202212.01\FreeRTOS\Demo\CORTEX_LM3S6965_GCC_QEMU\LocalDemoFiles/globals.h \
  C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h \
  C:\FreeRTOSv202212.01\FreeRTOS\Source\include/task.h \
+ C:\FreeRTOSv202212.01\FreeRTOS\Source\include/semphr.h \
+ C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h \
  C:\FreeRTOSv202212.01\FreeRTOS\Demo\CORTEX_LM3S6965_GCC_QEMU\LocalDemoFiles/osram128x64x4.h \
  C:\FreeRTOSv202212.01\FreeRTOS\Demo\CORTEX_LM3S6965_GCC_QEMU\LocalDemoFiles/serial.h \
  C:\FreeRTOSv202212.01\FreeRTOS\Demo\CORTEX_LM3S6965_GCC_QEMU\LocalDemoFiles/display.h
@@ -44,6 +46,8 @@ C:\FreeRTOSv202212.01\FreeRTOS\Demo\Common\drivers\LuminaryMicro/sysctl.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Demo\CORTEX_LM3S6965_GCC_QEMU\LocalDemoFiles/globals.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Source\include/task.h:
+C:\FreeRTOSv202212.01\FreeRTOS\Source\include/semphr.h:
+C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Demo\CORTEX_LM3S6965_GCC_QEMU\LocalDemoFiles/osram128x64x4.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Demo\CORTEX_LM3S6965_GCC_QEMU\LocalDemoFiles/serial.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Demo\CORTEX_LM3S6965_GCC_QEMU\LocalDemoFiles/display.h:

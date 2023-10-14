@@ -9,7 +9,9 @@ LocalDemoFiles/globals.o: ../LocalDemoFiles/globals.c \
  C:\FreeRTOSv202212.01\FreeRTOS\Source\include/mpu_wrappers.h \
  C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h \
  C:\FreeRTOSv202212.01\FreeRTOS\Source\include/task.h \
- C:\FreeRTOSv202212.01\FreeRTOS\Source\include/list.h
+ C:\FreeRTOSv202212.01\FreeRTOS\Source\include/list.h \
+ C:\FreeRTOSv202212.01\FreeRTOS\Source\include/semphr.h \
+ C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h
 ../LocalDemoFiles/globals.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Source\include/FreeRTOS.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Demo\CORTEX_LM3S6965_GCC_QEMU/FreeRTOSConfig.h:
@@ -21,3 +23,5 @@ C:\FreeRTOSv202212.01\FreeRTOS\Source\include/mpu_wrappers.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Source\include/task.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Source\include/list.h:
+C:\FreeRTOSv202212.01\FreeRTOS\Source\include/semphr.h:
+C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h:

@@ -42,7 +42,7 @@
 #include "sysctl.h"
 #include "osram128x64x4.h"
 
-#define HEIGHT 80
+#define HEIGHT 64
 #define WIDTH 64
 
 static unsigned char buffer[HEIGHT*WIDTH] = {0x00};
@@ -1051,7 +1051,7 @@ OSRAM128x64x4DisplayOff(void)
 
 void OSRAM128x64x4SwapBuffer(void)
 {
-	OSRAM128x64x4ImageDraw(buffer, 0, 0, 128, 80, 0);
+	OSRAM128x64x4ImageDraw(buffer, 0, 0, 128, 64, 0);
 
 	unsigned long i = WIDTH*HEIGHT - 1;
 

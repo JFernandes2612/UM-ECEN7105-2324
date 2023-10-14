@@ -8,6 +8,8 @@
 #ifndef LOCALDEMOFILES_SERIAL_H_
 #define LOCALDEMOFILES_SERIAL_H_
 
+void cleanSerial();
+
 enum SpecialKey {
 	Up,
 	Down,

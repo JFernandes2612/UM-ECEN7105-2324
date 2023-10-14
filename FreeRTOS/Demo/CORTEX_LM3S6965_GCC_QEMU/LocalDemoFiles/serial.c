@@ -19,6 +19,30 @@
 
 #include "worker.h"
 
+void cleanSerial()
+{
+	while (UARTCharsAvail(UART0_BASE)) {
+		UARTCharGet(UART0_BASE);
+	}
+
+	UARTCharPut(UART0_BASE, 0x1B);
+	UARTCharPut(UART0_BASE, 0x5B);
+	UARTCharPut(UART0_BASE, 0x32);
+	UARTCharPut(UART0_BASE, 0x4A);
+
+	UARTCharPut(UART0_BASE, 0x1B);
+	UARTCharPut(UART0_BASE, 0x5B);
+	UARTCharPut(UART0_BASE, 0x48);
+}
+
+void writeToSerialBuffer(long i, char v)
+{
+	if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+		serialBuffer[i] = v;
+		xSemaphoreGive(displayS);
+	}
+}
+
 void defaultSerial()
 {
 	static char c;
@@ -27,19 +51,23 @@ void defaultSerial()
 	while (UARTCharsAvail(UART0_BASE)) {
 		c = UARTCharGet(UART0_BASE);
 
-		UARTCharPut(UART0_BASE, c);
-
 		if (c == 0x1B)
 		{
 			state = 0;
-			while (i > 0)
-			{
+			if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+				while (i > 0)
+				{
+					serialBuffer[i] = 0;
+					i--;
+				}
 				serialBuffer[i] = 0;
-				i--;
+				cleanSerial();
+				xSemaphoreGive(displayS);
 			}
-			serialBuffer[i] = 0;
 			break;
 		}
+
+		UARTCharPut(UART0_BASE, c);
 
 		if (c == 0x08)
 		{
@@ -51,11 +79,11 @@ void defaultSerial()
 			UARTCharPut(UART0_BASE, 0x08);
 
 			i--;
-			serialBuffer[i] = 0;
+			writeToSerialBuffer(i, 0);
 		}
 		else
 		{
-			serialBuffer[i] = c;
+			writeToSerialBuffer(i, c);
 			i++;
 		}
 	}
@@ -138,6 +166,7 @@ void moveMouse()
 			state = 0;
 			mouse.x = 0;
 			mouse.y = 0;
+			cleanSerial();
 			break;
 		default:
 			break;
@@ -165,13 +194,17 @@ void interactWorkers()
 		if (c == 0x1B)
 		{
 			state = 0;
-			while (i > 0)
-			{
+			if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+				while (i > 0)
+				{
+					serialBuffer[i] = 0;
+					i--;
+				}
 				serialBuffer[i] = 0;
-				i--;
+				stopWorkers();
+				cleanSerial();
+				xSemaphoreGive(displayS);
 			}
-			serialBuffer[i] = 0;
-			stopWorkers();
 			break;
 		}
 
@@ -188,13 +221,13 @@ void interactWorkers()
 			UARTCharPut(UART0_BASE, 0x08);
 
 			i--;
-			serialBuffer[i] = 0;
+			writeToSerialBuffer(i, 0);
 		}
 		else
 		{
 			if (i < 3 && isdigit(c))
 			{
-				serialBuffer[i] = c;
+				writeToSerialBuffer(i, c);
 				i++;
 			}
 		}
