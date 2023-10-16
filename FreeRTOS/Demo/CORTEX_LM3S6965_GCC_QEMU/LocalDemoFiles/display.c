@@ -11,6 +11,7 @@
 #include "display.h"
 #include "serial.h"
 #include "osram128x64x4.h"
+#include "snake.h"
 
 void printScreanType()
 {
@@ -45,6 +46,9 @@ void printMenu()
 			break;
 		case WORKERS_SELECTION:
 			OSRAM128x64x4StringDraw("Workers Mode", 0, 15, 0xF, 1);
+			break;
+		case SNAKE_SELECTION:
+			OSRAM128x64x4StringDraw("Snake Game", 0, 15, 0xF, 1);
 			break;
 	}
 }
@@ -83,4 +87,25 @@ void printWorkers()
 		sprintf(nextUp, "Next-%d", nextUpVal);
 		OSRAM128x64x4StringDraw(nextUp, 0, 12, 0xF, 1);
 	}
+}
+
+void drawSnakeGame()
+{
+	unsigned int i = snake.p;
+
+	char score[9];
+
+	while (i != 0)
+	{
+		OSRAM128x64x4PixelDraw(snake.s[i].x % OSRAM128x64x4WIDTH, snake.s[i].y % OSRAM128x64x4HEIGHT, 0xA, 1);
+		i--;
+	}
+	OSRAM128x64x4PixelDraw(snake.s[0].x % OSRAM128x64x4WIDTH, snake.s[0].y % OSRAM128x64x4HEIGHT, 0xB, 1);
+
+	OSRAM128x64x4PixelDraw(snake.food.x, snake.food.y, 0xF, 1);
+
+	OSRAM128x64x4RectangleDraw(SNAKEGAME_START_X, SNAKEGAME_START_Y, SNAKEGAME_WIDTH, SNAKEGAME_HEIGHT, 0x1, 1);
+
+	sprintf(score, "Score-%d", snake.p);
+	OSRAM128x64x4StringDraw(score, 0, 0, 0xF, 1);
 }

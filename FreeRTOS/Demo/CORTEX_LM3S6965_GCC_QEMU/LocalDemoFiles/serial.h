@@ -30,4 +30,6 @@ void interactMenu();
 
 void interactWorkers();
 
+void interactSnakeGame();
+
 #endif /* LOCALDEMOFILES_SERIAL_H_ */

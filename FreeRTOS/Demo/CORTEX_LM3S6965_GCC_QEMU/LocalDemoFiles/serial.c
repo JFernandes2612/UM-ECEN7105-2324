@@ -18,6 +18,7 @@
 #include "globals.h"
 
 #include "worker.h"
+#include "snake.h"
 
 void cleanSerial()
 {
@@ -53,7 +54,6 @@ void defaultSerial()
 
 		if (c == 0x1B)
 		{
-			state = 0;
 			if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
 				while (i > 0)
 				{
@@ -62,6 +62,7 @@ void defaultSerial()
 				}
 				serialBuffer[i] = 0;
 				cleanSerial();
+				state = 0;
 				xSemaphoreGive(displayS);
 			}
 			break;
@@ -166,7 +167,10 @@ void moveMouse()
 			state = 0;
 			mouse.x = 0;
 			mouse.y = 0;
-			cleanSerial();
+			if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+				cleanSerial();
+				xSemaphoreGive(displayS);
+			}
 			break;
 		default:
 			break;
@@ -193,7 +197,6 @@ void interactWorkers()
 
 		if (c == 0x1B)
 		{
-			state = 0;
 			if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
 				while (i > 0)
 				{
@@ -203,6 +206,7 @@ void interactWorkers()
 				serialBuffer[i] = 0;
 				stopWorkers();
 				cleanSerial();
+				state = 0;
 				xSemaphoreGive(displayS);
 			}
 			break;
@@ -266,7 +270,52 @@ void interactMenu()
 
 		if (state == WORKERS)
 		{
-			initWorkers();
+			if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+				initWorkers();
+				xSemaphoreGive(displayS);
+			}
 		}
+
+		if (state == SNAKE)
+		{
+			if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+				initSnake();
+				xSemaphoreGive(displayS);
+			}
+		}
+	}
+}
+
+void interactSnakeGame()
+{
+	const enum SpecialKey d = getSpecialKey();
+
+	switch (d)
+	{
+		case Up:
+			if (snake.d != S_DOWN)
+				snake.d = S_UP;
+			break;
+		case Down:
+			if (snake.d != S_UP)
+				snake.d = S_DOWN;
+			break;
+		case Right:
+			if (snake.d != S_LEFT)
+				snake.d = S_RIGHT;
+			break;
+		case Left:
+			if (snake.d != S_RIGHT)
+				snake.d = S_LEFT;
+			break;
+		case Esc:
+			if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+				stopSnake();
+				state = 0;
+				xSemaphoreGive(displayS);
+			}
+			break;
+		default:
+			break;
 	}
 }

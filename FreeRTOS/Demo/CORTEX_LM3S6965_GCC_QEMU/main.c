@@ -48,8 +48,8 @@ int main( void )
 	prvSetupHardware();
 
 	/* Start the tasks defined within this file/specific to this demo. */
-	xTaskCreate( SerialTask, "Serial", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
-	xTaskCreate( RefreshDisplayTask, "RefreshDisplay", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL);
+	xTaskCreate( SerialTask, "Serial", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL );
+	xTaskCreate( RefreshDisplayTask, "RefreshDisplay", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL);
 
 
 	/* Start the scheduler. */
@@ -124,6 +124,10 @@ void SerialTask( void *pvParameters )
 		{
 			interactWorkers();
 		}
+		else if (state == SNAKE)
+		{
+			interactSnakeGame();
+		}
 	}
 }
 
@@ -161,6 +165,10 @@ void RefreshDisplayTask( void *pvParameters )
 			else if (state == WORKERS)
 			{
 				printWorkers();
+			}
+			else if (state == SNAKE)
+			{
+				drawSnakeGame();
 			}
 
 			OSRAM128x64x4SwapBuffer();

@@ -17,7 +17,7 @@ LocalDemoFiles/serial.o: ../LocalDemoFiles/serial.c \
  C:\FreeRTOSv202212.01\FreeRTOS\Source\include/list.h \
  C:\FreeRTOSv202212.01\FreeRTOS\Source\include/semphr.h \
  C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h \
- ../LocalDemoFiles/worker.h
+ ../LocalDemoFiles/worker.h ../LocalDemoFiles/snake.h
 ../LocalDemoFiles/serial.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Demo\Common\drivers\LuminaryMicro/hw_memmap.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Demo\Common\drivers\LuminaryMicro/hw_types.h:
@@ -37,3 +37,4 @@ C:\FreeRTOSv202212.01\FreeRTOS\Source\include/list.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Source\include/semphr.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h:
 ../LocalDemoFiles/worker.h:
+../LocalDemoFiles/snake.h:

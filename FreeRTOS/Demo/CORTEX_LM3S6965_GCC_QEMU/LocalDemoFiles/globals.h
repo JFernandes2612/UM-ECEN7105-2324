@@ -39,16 +39,17 @@ enum State {
 	SCREEN_TYPE,
 	MOUSE,
 	WORKERS,
+	SNAKE,
 };
 
 extern enum State state;
 
 // MOUSE
-struct Mouse {
+struct Pos {
 	unsigned char x, y;
 };
 
-extern struct Mouse mouse;
+extern struct Pos mouse;
 
 // SERIAL INPUT BUFFER
 extern char serialBuffer[1024];
@@ -59,6 +60,7 @@ enum MenuSelection {
 	SCREEN_TYPE_SELECTION,
 	MOUSE_SELECTION,
 	WORKERS_SELECTION,
+	SNAKE_SELECTION,
 };
 
 extern enum MenuSelection menu;
@@ -72,4 +74,24 @@ extern QueueHandle_t workersQueue;
 extern unsigned int current_timer_1;
 extern unsigned int current_timer_2;
 extern unsigned int current_timer_3;
+
+// SNAKE
+
+enum SnakeDir {
+	S_UP,
+	S_DOWN,
+	S_RIGHT,
+	S_LEFT
+};
+
+struct Snake {
+	struct Pos s[128];
+	struct Pos ps[128];
+	unsigned int p;
+	enum SnakeDir d;
+	struct Pos food;
+};
+
+extern struct Snake snake;
+
 #endif /* LOCALDEMOFILES_GLOBALS_H_ */

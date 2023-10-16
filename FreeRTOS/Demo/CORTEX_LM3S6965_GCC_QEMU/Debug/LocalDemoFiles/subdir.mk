@@ -8,6 +8,7 @@ C_SRCS += \
 ../LocalDemoFiles/globals.c \
 ../LocalDemoFiles/osram128x64x4.c \
 ../LocalDemoFiles/serial.c \
+../LocalDemoFiles/snake.c \
 ../LocalDemoFiles/worker.c 
 
 OBJS += \
@@ -15,6 +16,7 @@ OBJS += \
 ./LocalDemoFiles/globals.o \
 ./LocalDemoFiles/osram128x64x4.o \
 ./LocalDemoFiles/serial.o \
+./LocalDemoFiles/snake.o \
 ./LocalDemoFiles/worker.o 
 
 C_DEPS += \
@@ -22,6 +24,7 @@ C_DEPS += \
 ./LocalDemoFiles/globals.d \
 ./LocalDemoFiles/osram128x64x4.d \
 ./LocalDemoFiles/serial.d \
+./LocalDemoFiles/snake.d \
 ./LocalDemoFiles/worker.d 
 
 

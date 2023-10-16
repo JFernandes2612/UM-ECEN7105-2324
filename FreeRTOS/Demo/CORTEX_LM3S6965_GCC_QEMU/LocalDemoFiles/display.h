@@ -16,4 +16,6 @@ void printMenu();
 
 void printWorkers();
 
+void drawSnakeGame();
+
 #endif /* LOCALDEMOFILES_DISPLAY_H_ */
