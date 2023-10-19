@@ -13,6 +13,7 @@ enum State state = MENU;
 
 char serialBuffer[169] = { 32 };
 unsigned int serialBufferIndex = 0;
+unsigned char flash_cursor = 1;
 
 struct Pos mouse = {0, 0};
 

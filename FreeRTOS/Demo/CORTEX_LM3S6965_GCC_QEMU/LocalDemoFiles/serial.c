@@ -19,6 +19,7 @@
 
 #include "worker.h"
 #include "snake.h"
+#include "display.h"
 
 void cleanSerial()
 {
@@ -65,6 +66,7 @@ void defaultSerial()
 					}
 					serialBuffer[serialBufferIndex] = 32;
 					cleanSerial();
+					stopFlashCursor();
 					state = 0;
 					xSemaphoreGive(displayS);
 				}
@@ -121,6 +123,7 @@ void defaultSerial()
 		{
 			if (serialBufferIndex != 168)
 			{
+				flash_cursor = 12;
 				writeToSerialBuffer(c);
 				serialBufferIndex++;
 			}
@@ -207,6 +210,7 @@ void moveMouse()
 			mouse.y = 0;
 			if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
 				cleanSerial();
+				stopFlashCursor();
 				xSemaphoreGive(displayS);
 			}
 			break;
@@ -243,6 +247,7 @@ void interactWorkers()
 				serialBuffer[serialBufferIndex] = 32;
 				stopWorkers();
 				cleanSerial();
+				stopFlashCursor();
 				state = 0;
 				xSemaphoreGive(displayS);
 			}
@@ -268,6 +273,7 @@ void interactWorkers()
 		{
 			if (serialBufferIndex < 3 && isdigit(c))
 			{
+				flash_cursor = 12;
 				writeToSerialBuffer(c);
 				serialBufferIndex++;
 			}
@@ -305,20 +311,35 @@ void interactMenu()
 	{
 		state = menu + 1;
 
-		if (state == WORKERS)
+		switch (state)
 		{
-			if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
-				initWorkers();
-				xSemaphoreGive(displayS);
+			case WORKERS:
+			{
+				if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+					initWorkers();
+					startFlashCursor();
+					xSemaphoreGive(displayS);
+				}
+				break;
 			}
-		}
-
-		if (state == SNAKE)
-		{
-			if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
-				initSnake();
-				xSemaphoreGive(displayS);
+			case SNAKE:
+			{
+				if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+					initSnake();
+					xSemaphoreGive(displayS);
+				}
+				break;
 			}
+			case SCREEN_TYPE:
+			{
+				if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+					startFlashCursor();
+					xSemaphoreGive(displayS);
+				}
+				break;
+			}
+			default:
+				break;
 		}
 	}
 }

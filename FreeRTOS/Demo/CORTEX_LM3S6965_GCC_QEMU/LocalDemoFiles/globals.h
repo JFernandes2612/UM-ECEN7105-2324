@@ -54,6 +54,7 @@ extern struct Pos mouse;
 // SERIAL INPUT BUFFER
 extern char serialBuffer[169];
 extern unsigned int serialBufferIndex;
+extern unsigned char flash_cursor;
 
 // MENU
 

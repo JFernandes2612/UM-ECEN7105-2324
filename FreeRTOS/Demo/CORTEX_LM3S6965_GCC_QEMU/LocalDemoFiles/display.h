@@ -18,4 +18,12 @@ void printWorkers();
 
 void drawSnakeGame();
 
+// Flash Cursor
+
+void FlashCursorTask( void *pvParameters );
+
+void startFlashCursor();
+
+void stopFlashCursor();
+
 #endif /* LOCALDEMOFILES_DISPLAY_H_ */

@@ -26,7 +26,7 @@ void printScreanType()
 		xSemaphoreGive(displayS);
 	}
 
-	OSRAM128x64x4RectangleDraw(serialBufferIndex%21 * 6, (serialBufferIndex/21 + 1) * 7 + serialBufferIndex/21, 5, 1, 0xA, 1);
+	OSRAM128x64x4RectangleDraw(serialBufferIndex%21 * 6, (serialBufferIndex/21 + 1) * 7 + serialBufferIndex/21, 5, 1, flash_cursor, 1);
 }
 
 void printMouse()
@@ -82,7 +82,7 @@ void printWorkers()
 	sprintf(s, "%d", current_timer_3);
 	OSRAM128x64x4StringDraw(s, 65, 56, 0xF, 1);
 
-	OSRAM128x64x4RectangleDraw(serialBufferIndex * 6 + 10, 32 + 7, 5, 1, 0xA, 1);
+	OSRAM128x64x4RectangleDraw(serialBufferIndex * 6 + 10, 32 + 7, 5, 1, flash_cursor, 1);
 
 	char nextUp[9];
 	unsigned int nextUpVal;
@@ -112,4 +112,56 @@ void drawSnakeGame()
 
 	sprintf(score, "Score-%d", snake.p);
 	OSRAM128x64x4StringDraw(score, 0, 0, 0xF, 1);
+}
+
+// Flash Cursor
+
+TaskHandle_t xHandleFlashCursor = NULL;
+
+void FlashCursorTask( void *pvParameters )
+{
+	( void ) pvParameters;
+
+	TickType_t xLastWakeTime;
+
+	const TickType_t xDefaultFrequency = pdMS_TO_TICKS(30);
+
+	xLastWakeTime = xTaskGetTickCount();
+
+	unsigned char bounce = 1;
+
+	for (;;)
+	{
+		// Wait for the next cycle.
+		xTaskDelayUntil( &xLastWakeTime, xDefaultFrequency );
+
+		if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+			if (bounce)
+			{
+				if (flash_cursor == 12)
+					bounce = 0;
+				else
+					flash_cursor += 1;;
+			}
+			else
+			{
+				if (flash_cursor == 0)
+					bounce = 1;
+				else
+					flash_cursor -= 1;
+			}
+			xSemaphoreGive(displayS);
+		}
+
+	}
+}
+
+void startFlashCursor()
+{
+	xTaskCreate( FlashCursorTask, "FlashCursor", 60, NULL, tskIDLE_PRIORITY, &xHandleFlashCursor );
+}
+
+void stopFlashCursor()
+{
+	vTaskDelete(xHandleFlashCursor);
 }
