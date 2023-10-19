@@ -15,16 +15,18 @@
 
 void printScreanType()
 {
-	long int i = 0;
+	unsigned int i = 0;
 	// Write line to line
 	if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
-		while (serialBuffer[i])
+		while (i < 169)
 		{
 			OSRAM128x64x4StringDraw(serialBuffer + i, 0, i/21 * 8, 0xF, 1);
 			i += 21;
 		}
 		xSemaphoreGive(displayS);
 	}
+
+	OSRAM128x64x4RectangleDraw(serialBufferIndex%21 * 6, (serialBufferIndex/21 + 1) * 7 + serialBufferIndex/21, 5, 1, 0xA, 1);
 }
 
 void printMouse()
@@ -80,6 +82,8 @@ void printWorkers()
 	sprintf(s, "%d", current_timer_3);
 	OSRAM128x64x4StringDraw(s, 65, 56, 0xF, 1);
 
+	OSRAM128x64x4RectangleDraw(serialBufferIndex * 6 + 10, 32 + 7, 5, 1, 0xA, 1);
+
 	char nextUp[9];
 	unsigned int nextUpVal;
 	if (xQueuePeek(workersQueue, &nextUpVal, ( TickType_t ) 0) == pdPASS)
@@ -97,7 +101,7 @@ void drawSnakeGame()
 
 	while (i != 0)
 	{
-		OSRAM128x64x4PixelDraw(snake.s[i].x % OSRAM128x64x4WIDTH, snake.s[i].y % OSRAM128x64x4HEIGHT, 0xA, 1);
+		OSRAM128x64x4PixelDraw(snake.s[i].x % OSRAM128x64x4WIDTH, snake.s[i].y % OSRAM128x64x4HEIGHT, 0x8, 1);
 		i--;
 	}
 	OSRAM128x64x4PixelDraw(snake.s[0].x % OSRAM128x64x4WIDTH, snake.s[0].y % OSRAM128x64x4HEIGHT, 0xB, 1);

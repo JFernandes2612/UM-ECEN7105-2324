@@ -11,7 +11,8 @@ SemaphoreHandle_t displayS = NULL;
 
 enum State state = MENU;
 
-char serialBuffer[1024] = {0};
+char serialBuffer[169] = { 32 };
+unsigned int serialBufferIndex = 0;
 
 struct Pos mouse = {0, 0};
 

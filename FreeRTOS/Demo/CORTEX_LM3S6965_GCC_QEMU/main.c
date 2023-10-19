@@ -78,6 +78,13 @@ void prvSetupHardware( void )
 	UARTEnable( UART0_BASE );
 	cleanSerial();
 
+	unsigned int i = 0;
+	while (i <= 168)
+	{
+		serialBuffer[i] = ' '; // litle cheatcode lol
+		i++;
+	}
+
 	/* Map the OLED access functions to the driver functions that are appropriate
 	for the evaluation kit being used. */
 	configASSERT( ( HWREG( SYSCTL_DID1 ) & SYSCTL_DID1_PRTNO_MASK ) == SYSCTL_DID1_PRTNO_6965 );
@@ -98,7 +105,7 @@ void SerialTask( void *pvParameters )
 	( void ) pvParameters;
 
 	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = pdMS_TO_TICKS(1);
+	const TickType_t xFrequency = pdMS_TO_TICKS(10);
 
 	xLastWakeTime = xTaskGetTickCount();
 
@@ -138,7 +145,7 @@ void RefreshDisplayTask( void *pvParameters )
 
 	{
 		TickType_t xLastWakeTime;
-		const TickType_t xFrequency = pdMS_TO_TICKS(16); // ~60fps
+		const TickType_t xFrequency = pdMS_TO_TICKS(33); // ~30fps
 
 		// Initialise the xLastWakeTime variable with the current time.
 		xLastWakeTime = xTaskGetTickCount();

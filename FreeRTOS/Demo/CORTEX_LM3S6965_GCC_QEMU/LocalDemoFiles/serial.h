@@ -20,7 +20,7 @@ enum SpecialKey {
 	None,
 };
 
-enum SpecialKey getSpecialKey();
+enum SpecialKey getSpecialKey(const unsigned char skipESC);
 
 void defaultSerial();
 

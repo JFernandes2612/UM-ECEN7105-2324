@@ -52,7 +52,8 @@ struct Pos {
 extern struct Pos mouse;
 
 // SERIAL INPUT BUFFER
-extern char serialBuffer[1024];
+extern char serialBuffer[169];
+extern unsigned int serialBufferIndex;
 
 // MENU
 
