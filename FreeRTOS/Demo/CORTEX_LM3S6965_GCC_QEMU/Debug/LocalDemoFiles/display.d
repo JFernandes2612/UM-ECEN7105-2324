@@ -13,7 +13,8 @@ LocalDemoFiles/display.o: ../LocalDemoFiles/display.c \
  C:\FreeRTOSv202212.01\FreeRTOS\Source\include/semphr.h \
  C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h \
  ../LocalDemoFiles/display.h ../LocalDemoFiles/serial.h \
- ../LocalDemoFiles/osram128x64x4.h ../LocalDemoFiles/snake.h
+ ../LocalDemoFiles/osram128x64x4.h ../LocalDemoFiles/snake.h \
+ ../LocalDemoFiles/video.h
 C:\FreeRTOSv202212.01\FreeRTOS\Demo\CORTEX_LM3S6965_GCC_QEMU\LocalDemoFiles/globals.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Source\include/FreeRTOS.h:
 C:\FreeRTOSv202212.01\FreeRTOS\Demo\CORTEX_LM3S6965_GCC_QEMU/FreeRTOSConfig.h:
@@ -31,3 +32,4 @@ C:\FreeRTOSv202212.01\FreeRTOS\Source\include/queue.h:
 ../LocalDemoFiles/serial.h:
 ../LocalDemoFiles/osram128x64x4.h:
 ../LocalDemoFiles/snake.h:
+../LocalDemoFiles/video.h:

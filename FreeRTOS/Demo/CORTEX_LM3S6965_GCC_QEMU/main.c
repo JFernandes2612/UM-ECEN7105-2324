@@ -49,7 +49,7 @@ int main( void )
 
 	/* Start the tasks defined within this file/specific to this demo. */
 	xTaskCreate( SerialTask, "Serial", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL );
-	xTaskCreate( RefreshDisplayTask, "RefreshDisplay", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL);
+	xTaskCreate( RefreshDisplayTask, "RefreshDisplay", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL);
 
 
 	/* Start the scheduler. */
@@ -135,6 +135,10 @@ void SerialTask( void *pvParameters )
 		{
 			interactSnakeGame();
 		}
+		else if (state == VIDEO)
+		{
+			interactVideo();
+		}
 	}
 }
 
@@ -157,28 +161,35 @@ void RefreshDisplayTask( void *pvParameters )
 			// Wait for the next cycle.
 			xTaskDelayUntil( &xLastWakeTime, xFrequency );
 
-			if (state == SCREEN_TYPE)
-			{
-				printScreanType();
-			}
-			else if (state == MOUSE)
-			{
-				printMouse();
-			}
-			else if (state == MENU)
-			{
-				printMenu();
-			}
-			else if (state == WORKERS)
-			{
-				printWorkers();
-			}
-			else if (state == SNAKE)
-			{
-				drawSnakeGame();
-			}
+			if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+				if (state == SCREEN_TYPE)
+				{
+					printScreanType();
+				}
+				else if (state == MOUSE)
+				{
+					printMouse();
+				}
+				else if (state == MENU)
+				{
+					printMenu();
+				}
+				else if (state == WORKERS)
+				{
+					printWorkers();
+				}
+				else if (state == SNAKE)
+				{
+					drawSnakeGame();
+				}
+				else if (state == VIDEO)
+				{
+					drawVideo();
+				}
 
-			OSRAM128x64x4SwapBuffer();
+				OSRAM128x64x4SwapBuffer();
+				xSemaphoreGive(displayS);
+			}
 		}
 	}
 }

@@ -22,7 +22,7 @@ void initSnake()
 	snake.food.y = xTaskGetTickCount() % SNAKEGAME_HEIGHT + SNAKEGAME_START_Y;
 
 	// Top priority
-	xTaskCreate( SnakeTask, "Snake", 60, NULL, tskIDLE_PRIORITY, &xHandleSnake );
+	xTaskCreate( SnakeTask, "Snake", 60, NULL, tskIDLE_PRIORITY + 2, &xHandleSnake );
 }
 
 void SnakeTask( void *pvParameters )

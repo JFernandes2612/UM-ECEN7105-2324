@@ -338,6 +338,15 @@ void interactMenu()
 				}
 				break;
 			}
+			case VIDEO:
+			{
+				if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+					frame = 0;
+					videoMutex = xSemaphoreCreateMutex();
+					xSemaphoreGive(displayS);
+				}
+				break;
+			}
 			default:
 				break;
 		}
@@ -370,6 +379,43 @@ void interactSnakeGame()
 			if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
 				stopSnake();
 				state = 0;
+				xSemaphoreGive(displayS);
+			}
+			break;
+		default:
+			break;
+	}
+}
+
+void interactVideo()
+{
+	const enum SpecialKey d = getSpecialKey(0);
+
+	switch (d)
+	{
+		case Right:
+			if (xSemaphoreTake(videoMutex, portMAX_DELAY ) == pdTRUE){
+				if (frame < totalVideoFrames - 30)
+				{
+					frame += 30;
+				}
+				xSemaphoreGive(videoMutex);
+			}
+			break;
+		case Left:
+			if (xSemaphoreTake(videoMutex, portMAX_DELAY ) == pdTRUE){
+				if (frame >= 30)
+				{
+					frame -= 30;
+				}
+				xSemaphoreGive(videoMutex);
+			}
+			break;
+		case Esc:
+			if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+				state = 0;
+				frame = 0;
+				vSemaphoreDelete(videoMutex);
 				xSemaphoreGive(displayS);
 			}
 			break;

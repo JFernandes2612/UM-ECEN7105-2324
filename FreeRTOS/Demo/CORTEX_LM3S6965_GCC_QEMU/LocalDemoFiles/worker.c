@@ -83,9 +83,9 @@ void initWorkers()
 
 	workersQueue = xQueueCreate( 10, sizeof( unsigned int ) );
 
-	xTaskCreate( WorkerTask, "Worker1", 60, NULL, tskIDLE_PRIORITY, &xHandleWorker1 );
-	xTaskCreate( WorkerTask, "Worker2", 60, NULL, tskIDLE_PRIORITY, &xHandleWorker2 );
-	xTaskCreate( WorkerTask, "Worker3", 60, NULL, tskIDLE_PRIORITY, &xHandleWorker3 );
+	xTaskCreate( WorkerTask, "Worker1", 60, NULL, tskIDLE_PRIORITY + 2, &xHandleWorker1 );
+	xTaskCreate( WorkerTask, "Worker2", 60, NULL, tskIDLE_PRIORITY + 2, &xHandleWorker2 );
+	xTaskCreate( WorkerTask, "Worker3", 60, NULL, tskIDLE_PRIORITY + 2, &xHandleWorker3 );
 }
 
 void stopWorkers()

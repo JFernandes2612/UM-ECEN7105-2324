@@ -18,6 +18,8 @@ void printWorkers();
 
 void drawSnakeGame();
 
+void drawVideo();
+
 // Flash Cursor
 
 void FlashCursorTask( void *pvParameters );

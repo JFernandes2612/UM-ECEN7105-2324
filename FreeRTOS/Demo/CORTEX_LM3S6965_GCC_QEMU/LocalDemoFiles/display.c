@@ -12,6 +12,7 @@
 #include "serial.h"
 #include "osram128x64x4.h"
 #include "snake.h"
+#include "video.h"
 
 void printScreanType()
 {
@@ -51,6 +52,9 @@ void printMenu()
 			break;
 		case SNAKE_SELECTION:
 			OSRAM128x64x4StringDraw("Snake Game", 0, 15, 0xF, 1);
+			break;
+		case VIDEO_SELECTION:
+			OSRAM128x64x4StringDraw("Video", 0, 15, 0xF, 1);
 			break;
 	}
 }
@@ -114,6 +118,28 @@ void drawSnakeGame()
 	OSRAM128x64x4StringDraw(score, 0, 0, 0xF, 1);
 }
 
+void drawVideo()
+{
+	OSRAM128x64x4ImageDraw(video[frame/2], 34, 0, 20, 16, 1, 3);
+
+	if (xSemaphoreTake(videoMutex, portMAX_DELAY ) == pdTRUE){
+		frame++;
+		frame %= totalVideoFrames; // 2612 frames total
+		xSemaphoreGive(videoMutex);
+	}
+
+	char currentTime[7];
+	sprintf(currentTime, "%02d:%02d", frame/1800, (frame%1800)/30);
+	OSRAM128x64x4StringDraw(currentTime, 0, 0, 0xF, 1);
+
+	char finalTime[7];
+	sprintf(finalTime, "%02d:%02d", totalVideoFrames/1800, (totalVideoFrames%1800)/30);
+	OSRAM128x64x4StringDraw(finalTime, 99, 0, 0xF, 1);
+
+	OSRAM128x64x4RectangleDraw(14, 54, frame * 100 / totalVideoFrames, 4, 0xF, 1);
+	OSRAM128x64x4RectangleDraw(14 + frame * 100 / totalVideoFrames, 54, 1, 4, (frame * 100 * 15 / totalVideoFrames) % 15, 1);
+}
+
 // Flash Cursor
 
 TaskHandle_t xHandleFlashCursor = NULL;
@@ -158,7 +184,7 @@ void FlashCursorTask( void *pvParameters )
 
 void startFlashCursor()
 {
-	xTaskCreate( FlashCursorTask, "FlashCursor", 60, NULL, tskIDLE_PRIORITY, &xHandleFlashCursor );
+	xTaskCreate( FlashCursorTask, "FlashCursor", 60, NULL, tskIDLE_PRIORITY + 2, &xHandleFlashCursor );
 }
 
 void stopFlashCursor()

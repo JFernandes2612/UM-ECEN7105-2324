@@ -19,7 +19,7 @@ struct Pos mouse = {0, 0};
 
 enum MenuSelection menu = SCREEN_TYPE_SELECTION;
 
-signed char numberOfMenuStates = 4;
+signed char numberOfMenuStates = 5;
 
 QueueHandle_t workersQueue = NULL;
 
@@ -28,5 +28,9 @@ unsigned int current_timer_2 = 0;
 unsigned int current_timer_3 = 0;
 
 struct Snake snake = {{{0, 0}}, {{0, 0}}, 0, S_RIGHT, {0, 0}};
+
+unsigned int frame = 0;
+
+SemaphoreHandle_t videoMutex = 0;
 
 

@@ -46,7 +46,7 @@ extern void OSRAM128x64x4ImageDraw(const unsigned char *pucImage,
                                    unsigned long ulX,
                                    unsigned long ulY,
                                    unsigned long ulWidth,
-                                   unsigned long ulHeight, unsigned char onBuffer);
+                                   unsigned long ulHeight, unsigned char onBuffer, unsigned char upscale);
 extern void OSRAM128x64x4PixelDraw(unsigned long ulX, unsigned long ulY, unsigned char color, unsigned char onBuffer);
 extern void OSRAM128x64x4RectangleDraw(unsigned long ulX, unsigned long ulY, unsigned long sizeX, unsigned long sizeY, unsigned char color, unsigned char onBuffer);
 extern void OSRAM128x64x4Init(unsigned long ulFrequency);

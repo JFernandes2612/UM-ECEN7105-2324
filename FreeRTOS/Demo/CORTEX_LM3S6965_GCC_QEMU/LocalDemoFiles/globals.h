@@ -40,6 +40,7 @@ enum State {
 	MOUSE,
 	WORKERS,
 	SNAKE,
+	VIDEO,
 };
 
 extern enum State state;
@@ -63,6 +64,7 @@ enum MenuSelection {
 	MOUSE_SELECTION,
 	WORKERS_SELECTION,
 	SNAKE_SELECTION,
+	VIDEO_SELECTION,
 };
 
 extern enum MenuSelection menu;
@@ -95,5 +97,13 @@ struct Snake {
 };
 
 extern struct Snake snake;
+
+// VIDEO
+
+extern unsigned int frame;
+
+static unsigned int totalVideoFrames = 2612;
+
+extern SemaphoreHandle_t videoMutex;
 
 #endif /* LOCALDEMOFILES_GLOBALS_H_ */

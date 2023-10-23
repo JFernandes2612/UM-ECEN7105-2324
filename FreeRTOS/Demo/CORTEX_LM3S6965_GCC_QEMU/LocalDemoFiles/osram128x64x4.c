@@ -562,7 +562,7 @@ OSRAM128x64x4StringDraw(const char *pcStr, unsigned long ulX,
             // If there is room, dump the single data byte column to the
             // display.  Otherwise, bail out.
             //
-            if(ulX < 126)
+            if(ulX <= 128)
             {
             	if (!onBuffer)
             	{
@@ -658,7 +658,7 @@ OSRAM128x64x4StringDraw(const char *pcStr, unsigned long ulX,
 void
 OSRAM128x64x4ImageDraw(const unsigned char *pucImage, unsigned long ulX,
                unsigned long ulY, unsigned long ulWidth,
-               unsigned long ulHeight, unsigned char onBuffer)
+               unsigned long ulHeight, unsigned char onBuffer, unsigned char upscale)
 {
 
     //
@@ -707,7 +707,17 @@ OSRAM128x64x4ImageDraw(const unsigned char *pucImage, unsigned long ulX,
 				else {
 					color &= 0x0F;
 				}
-				OSRAM128x64x4PixelDraw(ulX + w, ulY + startHeight - ulHeight, color, 1);
+				char upscaleX = upscale - 1;
+				while (upscaleX >= 0)
+				{
+					char upscaleY = upscale - 1;
+					while (upscaleY >= 0)
+					{
+						OSRAM128x64x4PixelDraw(ulX + w * upscale + upscaleX, ulY + (startHeight - ulHeight) * upscale + upscaleY, color, 1);
+						upscaleY--;
+					}
+					upscaleX--;
+				}
 				w++;
 			}
     	} else {
@@ -721,7 +731,7 @@ OSRAM128x64x4ImageDraw(const unsigned char *pucImage, unsigned long ulX,
 			//
 			pucImage += (ulWidth / 2);
     	}
-    	ulHeight--;
+    	ulHeight -= 1;
     }
 }
 
@@ -1051,7 +1061,7 @@ OSRAM128x64x4DisplayOff(void)
 
 void OSRAM128x64x4SwapBuffer(void)
 {
-	OSRAM128x64x4ImageDraw(buffer, 0, 0, 128, 64, 0);
+	OSRAM128x64x4ImageDraw(buffer, 0, 0, 128, 64, 0, 1);
 
 	unsigned long i = WIDTH*HEIGHT - 1;
 
