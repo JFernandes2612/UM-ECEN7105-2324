@@ -562,7 +562,7 @@ OSRAM128x64x4StringDraw(const char *pcStr, unsigned long ulX,
             // If there is room, dump the single data byte column to the
             // display.  Otherwise, bail out.
             //
-            if(ulX <= 128)
+            if(ulX < 126)
             {
             	if (!onBuffer)
             	{

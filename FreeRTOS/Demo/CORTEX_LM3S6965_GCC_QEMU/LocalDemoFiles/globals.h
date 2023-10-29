@@ -41,6 +41,7 @@ enum State {
 	WORKERS,
 	SNAKE,
 	VIDEO,
+	SIN,
 };
 
 extern enum State state;
@@ -65,11 +66,14 @@ enum MenuSelection {
 	WORKERS_SELECTION,
 	SNAKE_SELECTION,
 	VIDEO_SELECTION,
+	SIN_SELECTION,
 };
 
 extern enum MenuSelection menu;
 
 extern signed char numberOfMenuStates;
+
+extern unsigned int menuClock;
 
 // WORKERS
 
@@ -105,5 +109,23 @@ extern unsigned int frame;
 static unsigned int totalVideoFrames = 2612;
 
 extern SemaphoreHandle_t videoMutex;
+
+// FUNC
+
+extern char funcStartIndex;
+
+enum FuncState {
+	A,
+	B,
+	DONE,
+};
+
+extern enum FuncState funcState;
+
+extern char func[42];
+
+extern char funcFreq;
+
+extern QueueHandle_t funcQueue;
 
 #endif /* LOCALDEMOFILES_GLOBALS_H_ */

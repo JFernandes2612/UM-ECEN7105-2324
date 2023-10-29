@@ -20,6 +20,8 @@ void drawSnakeGame();
 
 void drawVideo();
 
+void drawFunc();
+
 // Flash Cursor
 
 void FlashCursorTask( void *pvParameters );
@@ -27,5 +29,9 @@ void FlashCursorTask( void *pvParameters );
 void startFlashCursor();
 
 void stopFlashCursor();
+
+// Clock
+
+void clockTask( void *pvParameters );
 
 #endif /* LOCALDEMOFILES_DISPLAY_H_ */

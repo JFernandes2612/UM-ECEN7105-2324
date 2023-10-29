@@ -20,6 +20,7 @@
 #include "worker.h"
 #include "snake.h"
 #include "display.h"
+#include "func.h"
 
 void cleanSerial()
 {
@@ -210,7 +211,6 @@ void moveMouse()
 			mouse.y = 0;
 			if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
 				cleanSerial();
-				stopFlashCursor();
 				xSemaphoreGive(displayS);
 			}
 			break;
@@ -347,6 +347,15 @@ void interactMenu()
 				}
 				break;
 			}
+			case SIN:
+			{
+				if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+					startFlashCursor();
+					startFunc();
+					xSemaphoreGive(displayS);
+				}
+				break;
+			}
 			default:
 				break;
 		}
@@ -421,5 +430,77 @@ void interactVideo()
 			break;
 		default:
 			break;
+	}
+}
+
+void interactFunc()
+{
+	static char c;
+
+	while (UARTCharsAvail(UART0_BASE)) {
+		c = UARTCharGet(UART0_BASE);
+
+		if (c == 0x0D)
+		{
+			if (serialBufferIndex > 0)
+			{
+				int x = atoi(serialBuffer);
+				xQueueSendToBack(funcQueue, &x, ( TickType_t ) 0 );
+				if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+					while (serialBufferIndex > 0)
+					{
+						serialBuffer[serialBufferIndex] = 32;
+						serialBufferIndex--;
+					}
+					serialBuffer[serialBufferIndex] = 32;
+					cleanSerial();
+					xSemaphoreGive(displayS);
+				}
+			}
+			continue;
+		}
+
+		if (c == 0x1B)
+		{
+			if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+				while (serialBufferIndex > 0)
+				{
+					serialBuffer[serialBufferIndex] = 32;
+					serialBufferIndex--;
+				}
+				serialBuffer[serialBufferIndex] = 32;
+				stopFunc();
+				cleanSerial();
+				stopFlashCursor();
+				state = 0;
+				xSemaphoreGive(displayS);
+			}
+			break;
+		}
+
+		if ((serialBufferIndex < 3 && (isdigit(c) || c == 0x08 || c == '-')) || (serialBufferIndex == 3 && c == 0x08))
+			UARTCharPut(UART0_BASE, c);
+
+		if (c == 0x08)
+		{
+			if (serialBufferIndex == 0)
+				return;
+
+			c = ' ';
+			UARTCharPut(UART0_BASE, c);
+			UARTCharPut(UART0_BASE, 0x08);
+
+			serialBufferIndex--;
+			writeToSerialBuffer(0);
+		}
+		else
+		{
+			if (serialBufferIndex < 3 && (isdigit(c) || c == '-'))
+			{
+				flash_cursor = 12;
+				writeToSerialBuffer(c);
+				serialBufferIndex++;
+			}
+		}
 	}
 }

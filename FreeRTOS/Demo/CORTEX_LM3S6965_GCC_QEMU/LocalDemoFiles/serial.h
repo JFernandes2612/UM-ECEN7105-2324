@@ -34,4 +34,6 @@ void interactSnakeGame();
 
 void interactVideo();
 
+void interactFunc();
+
 #endif /* LOCALDEMOFILES_SERIAL_H_ */

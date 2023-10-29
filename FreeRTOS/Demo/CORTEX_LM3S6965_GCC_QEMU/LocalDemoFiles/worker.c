@@ -16,19 +16,16 @@
 #include "queue.h"
 #include "globals.h"
 
-TaskHandle_t xHandleWorker1 = NULL;
-TaskHandle_t xHandleWorker2 = NULL;
-TaskHandle_t xHandleWorker3 = NULL;
+static TaskHandle_t xHandleWorker1 = NULL;
+static TaskHandle_t xHandleWorker2 = NULL;
+static TaskHandle_t xHandleWorker3 = NULL;
 
 void WorkerTask( void *pvParameters )
 {
 	( void ) pvParameters;
 
 	TickType_t xLastWakeTime;
-	const TickType_t xDefaultFrequency = pdMS_TO_TICKS(50);
 	const TickType_t secondFrequency = pdMS_TO_TICKS(1000);
-
-	int working = 0;
 
 	unsigned int* timer;
 	char taskName[12];
@@ -50,27 +47,19 @@ void WorkerTask( void *pvParameters )
 
 	for (;;)
 	{
-		// Wait for the next cycle.
-		xTaskDelayUntil( &xLastWakeTime, xDefaultFrequency );
-
-		if (!working) {
-			int x;
-			if (xQueueReceive(workersQueue, &x, ( TickType_t ) 0 ) == pdPASS)
+		int x;
+		if (xQueueReceive(workersQueue, &x, portMAX_DELAY ) == pdPASS)
+		{
+			if (x != 0)
 			{
-				if (x != 0)
-				{
-					*timer = x;
-					working = 1;
-					xLastWakeTime = xTaskGetTickCount();
-				}
+				*timer = x;
+				xLastWakeTime = xTaskGetTickCount();
 			}
 		}
 
-		while (working) {
+		while (*timer > 0) {
 			xTaskDelayUntil( &xLastWakeTime, secondFrequency );
 			*timer -= 1;
-			if (*timer <= 0)
-				working = 0;
 		}
 	}
 }

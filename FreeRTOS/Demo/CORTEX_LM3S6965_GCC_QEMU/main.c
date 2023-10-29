@@ -1,6 +1,7 @@
 /* Standard includes. */
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 /* Scheduler includes. */
 #include "FreeRTOS.h"
@@ -48,9 +49,11 @@ int main( void )
 	prvSetupHardware();
 
 	/* Start the tasks defined within this file/specific to this demo. */
-	xTaskCreate( SerialTask, "Serial", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL );
-	xTaskCreate( RefreshDisplayTask, "RefreshDisplay", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL);
+	displayS = xSemaphoreCreateMutex();
 
+	xTaskCreate( clockTask, "SystemClock", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL);
+	xTaskCreate( RefreshDisplayTask, "RefreshDisplay", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL);
+	xTaskCreate( SerialTask, "Serial", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL );
 
 	/* Start the scheduler. */
 	vTaskStartScheduler();
@@ -139,6 +142,10 @@ void SerialTask( void *pvParameters )
 		{
 			interactVideo();
 		}
+		else if (state == SIN)
+		{
+			interactFunc();
+		}
 	}
 }
 
@@ -153,8 +160,6 @@ void RefreshDisplayTask( void *pvParameters )
 
 		// Initialise the xLastWakeTime variable with the current time.
 		xLastWakeTime = xTaskGetTickCount();
-
-		displayS = xSemaphoreCreateMutex();
 
 		for (;;)
 		{
@@ -185,6 +190,10 @@ void RefreshDisplayTask( void *pvParameters )
 				else if (state == VIDEO)
 				{
 					drawVideo();
+				}
+				else if (state == SIN)
+				{
+					drawFunc();
 				}
 
 				OSRAM128x64x4SwapBuffer();

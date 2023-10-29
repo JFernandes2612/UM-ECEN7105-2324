@@ -13,18 +13,16 @@
 #include "osram128x64x4.h"
 #include "snake.h"
 #include "video.h"
+#include "globals.h"
 
 void printScreanType()
 {
 	unsigned int i = 0;
 	// Write line to line
-	if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
-		while (i < 169)
-		{
-			OSRAM128x64x4StringDraw(serialBuffer + i, 0, i/21 * 8, 0xF, 1);
-			i += 21;
-		}
-		xSemaphoreGive(displayS);
+	while (i < 169)
+	{
+		OSRAM128x64x4StringDraw(serialBuffer + i, 0, i/21 * 8, 0xF, 1);
+		i += 21;
 	}
 
 	OSRAM128x64x4RectangleDraw(serialBufferIndex%21 * 6, (serialBufferIndex/21 + 1) * 7 + serialBufferIndex/21, 5, 1, flash_cursor, 1);
@@ -56,7 +54,14 @@ void printMenu()
 		case VIDEO_SELECTION:
 			OSRAM128x64x4StringDraw("Video", 0, 15, 0xF, 1);
 			break;
+		case SIN_SELECTION:
+			OSRAM128x64x4StringDraw("Sin Function Plot", 0, 15, 0xF, 1);
+			break;
 	}
+
+	char currentTime[7];
+	sprintf(currentTime, "%02d:%02d", menuClock/60, menuClock%60);
+	OSRAM128x64x4StringDraw(currentTime, 0, 56, 0xA, 1);
 }
 
 
@@ -70,10 +75,7 @@ void printWorkers()
 
 	OSRAM128x64x4StringDraw("Worker 3", 65, 48, 0xF, 1);
 
-	if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
-		OSRAM128x64x4StringDraw(serialBuffer, 10, 32, 0xF, 1);
-		xSemaphoreGive(displayS);
-	}
+	OSRAM128x64x4StringDraw(serialBuffer, 10, 32, 0xF, 1);
 
 	char s[4];
 
@@ -134,15 +136,47 @@ void drawVideo()
 
 	char finalTime[7];
 	sprintf(finalTime, "%02d:%02d", totalVideoFrames/1800, (totalVideoFrames%1800)/30);
-	OSRAM128x64x4StringDraw(finalTime, 99, 0, 0xF, 1);
+	OSRAM128x64x4StringDraw(finalTime, 95, 0, 0xF, 1);
 
 	OSRAM128x64x4RectangleDraw(14, 54, frame * 100 / totalVideoFrames, 4, 0xF, 1);
 	OSRAM128x64x4RectangleDraw(14 + frame * 100 / totalVideoFrames, 54, 1, 4, (frame * 100 * 15 / totalVideoFrames) % 15, 1);
 }
 
+void drawFunc()
+{
+	OSRAM128x64x4StringDraw("Sin(Ax) * B", 0, 0, 0xF, 1);
+
+	if (funcState == A)
+	{
+		OSRAM128x64x4StringDraw("A:", 0, 8, 0xF, 1);
+	}
+	else if (funcState == B)
+	{
+		OSRAM128x64x4StringDraw("B:", 0, 8, 0xF, 1);
+	}
+
+	OSRAM128x64x4StringDraw(serialBuffer, 12, 8, 0xF, 1);
+
+	if (funcState != DONE)
+		OSRAM128x64x4RectangleDraw(serialBufferIndex * 6 + 12, 15, 5, 1, flash_cursor, 1);
+
+	OSRAM128x64x4RectangleDraw(14, 35, 100, 1, 0x7, 1);
+	OSRAM128x64x4RectangleDraw(64, 10, 1, 50, 0x7, 1);
+
+	if (funcState == DONE)
+	{
+		char k = 0;
+		while (k < 100)
+		{
+			OSRAM128x64x4PixelDraw(k + 14, func[(k + funcStartIndex)%(funcFreq * 2)] + 35, 0xF, 1);
+			k++;
+		}
+	}
+}
+
 // Flash Cursor
 
-TaskHandle_t xHandleFlashCursor = NULL;
+static TaskHandle_t xHandleFlashCursor = NULL;
 
 void FlashCursorTask( void *pvParameters )
 {
@@ -190,4 +224,27 @@ void startFlashCursor()
 void stopFlashCursor()
 {
 	vTaskDelete(xHandleFlashCursor);
+}
+
+void clockTask( void *pvParameters )
+{
+	( void ) pvParameters;
+
+	TickType_t xLastWakeTime;
+
+	const TickType_t xDefaultFrequency = pdMS_TO_TICKS(1000);
+
+	xLastWakeTime = xTaskGetTickCount();
+
+	for (;;)
+	{
+		// Wait for the next cycle.
+		xTaskDelayUntil( &xLastWakeTime, xDefaultFrequency );
+
+		if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+			menuClock++;
+			xSemaphoreGive(displayS);
+		}
+
+	}
 }

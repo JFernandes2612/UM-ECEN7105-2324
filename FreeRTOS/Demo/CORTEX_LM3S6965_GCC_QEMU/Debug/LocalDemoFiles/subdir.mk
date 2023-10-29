@@ -5,6 +5,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../LocalDemoFiles/display.c \
+../LocalDemoFiles/func.c \
 ../LocalDemoFiles/globals.c \
 ../LocalDemoFiles/osram128x64x4.c \
 ../LocalDemoFiles/serial.c \
@@ -13,6 +14,7 @@ C_SRCS += \
 
 OBJS += \
 ./LocalDemoFiles/display.o \
+./LocalDemoFiles/func.o \
 ./LocalDemoFiles/globals.o \
 ./LocalDemoFiles/osram128x64x4.o \
 ./LocalDemoFiles/serial.o \
@@ -21,6 +23,7 @@ OBJS += \
 
 C_DEPS += \
 ./LocalDemoFiles/display.d \
+./LocalDemoFiles/func.d \
 ./LocalDemoFiles/globals.d \
 ./LocalDemoFiles/osram128x64x4.d \
 ./LocalDemoFiles/serial.d \
