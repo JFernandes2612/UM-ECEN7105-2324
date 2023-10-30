@@ -117,6 +117,7 @@ extern char funcStartIndex;
 enum FuncState {
 	A,
 	B,
+	C,
 	DONE,
 };
 

@@ -144,7 +144,7 @@ void drawVideo()
 
 void drawFunc()
 {
-	OSRAM128x64x4StringDraw("Sin(Ax) * B", 0, 0, 0xF, 1);
+	OSRAM128x64x4StringDraw("Sin(Ax) * B + C", 0, 0, 0xF, 1);
 
 	if (funcState == A)
 	{
@@ -153,6 +153,10 @@ void drawFunc()
 	else if (funcState == B)
 	{
 		OSRAM128x64x4StringDraw("B:", 0, 8, 0xF, 1);
+	}
+	else if (funcState == C)
+	{
+		OSRAM128x64x4StringDraw("C:", 0, 8, 0xF, 1);
 	}
 
 	OSRAM128x64x4StringDraw(serialBuffer, 12, 8, 0xF, 1);
@@ -184,7 +188,7 @@ void FlashCursorTask( void *pvParameters )
 
 	TickType_t xLastWakeTime;
 
-	const TickType_t xDefaultFrequency = pdMS_TO_TICKS(30);
+	const TickType_t xDefaultFrequency = pdMS_TO_TICKS(25);
 
 	xLastWakeTime = xTaskGetTickCount();
 

@@ -29,18 +29,22 @@ void FuncTask( void *pvParameters )
 	TickType_t xLastWakeTime;
 	const TickType_t xDefaultFrequency = pdMS_TO_TICKS(66);
 
-	int a, b;
+	int a, b, c;
 
 	if (xQueueReceive(funcQueue, &a, portMAX_DELAY ) == pdPASS) {
 		funcState = B;
 	}
 
 	if (xQueueReceive(funcQueue, &b, portMAX_DELAY ) == pdPASS) {
+		funcState = C;
+	}
+
+	if (xQueueReceive(funcQueue, &c, portMAX_DELAY ) == pdPASS) {
 		funcState = DONE;
 	}
 
 
-	double ad = (double)a, bd = (double)b;
+	double ad = (double)a, bd = (double)b, cd = (double)c;
 	int i = 0;
 	funcFreq = (char)(21.0 / fabs(ad));
 	while (i < funcFreq)
@@ -54,6 +58,8 @@ void FuncTask( void *pvParameters )
 		else
 			func[i] = fabs(finalV - (double)((char)finalV)) >= 0.5 ? ((char)finalV - 1) : (char)finalV;
 
+
+
 		i++;
 	}
 
@@ -62,6 +68,14 @@ void FuncTask( void *pvParameters )
 	while (i < funcFreq)
 	{
 		func[i + funcFreq] = -func[i];
+		i++;
+	}
+
+	i = 0;
+
+	while (i < funcFreq * 2)
+	{
+		func[i] -= 5 * cd;
 		i++;
 	}
 
@@ -83,15 +97,13 @@ void FuncTask( void *pvParameters )
 void startFunc()
 {
 	funcStartIndex = 0;
-	funcState = 0;
+	funcState = A;
 	funcQueue = xQueueCreate( 3, sizeof( int ) );
 	xTaskCreate( FuncTask, "Func", 100, NULL, tskIDLE_PRIORITY + 2, &xHandleFunc );
 }
 
 void stopFunc()
 {
-	funcStartIndex = 0;
-	funcState = 0;
 	vQueueDelete(funcQueue);
 	vTaskDelete( xHandleFunc );
 }

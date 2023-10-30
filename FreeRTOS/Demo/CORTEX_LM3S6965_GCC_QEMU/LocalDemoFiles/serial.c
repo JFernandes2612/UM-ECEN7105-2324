@@ -442,7 +442,7 @@ void interactFunc()
 
 		if (c == 0x0D)
 		{
-			if (serialBufferIndex > 0)
+			if (serialBufferIndex > 0 && funcState != DONE)
 			{
 				int x = atoi(serialBuffer);
 				xQueueSendToBack(funcQueue, &x, ( TickType_t ) 0 );
@@ -478,10 +478,10 @@ void interactFunc()
 			break;
 		}
 
-		if ((serialBufferIndex < 3 && (isdigit(c) || c == 0x08 || c == '-')) || (serialBufferIndex == 3 && c == 0x08))
+		if (((serialBufferIndex < 3 && (isdigit(c) || c == 0x08 || c == '-')) || (serialBufferIndex == 3 && c == 0x08)) && funcState != DONE)
 			UARTCharPut(UART0_BASE, c);
 
-		if (c == 0x08)
+		if (c == 0x08 && funcState != DONE)
 		{
 			if (serialBufferIndex == 0)
 				return;
@@ -493,14 +493,11 @@ void interactFunc()
 			serialBufferIndex--;
 			writeToSerialBuffer(0);
 		}
-		else
+		else if (serialBufferIndex < 3 && (isdigit(c) || c == '-') && funcState != DONE)
 		{
-			if (serialBufferIndex < 3 && (isdigit(c) || c == '-'))
-			{
-				flash_cursor = 12;
-				writeToSerialBuffer(c);
-				serialBufferIndex++;
-			}
+			flash_cursor = 12;
+			writeToSerialBuffer(c);
+			serialBufferIndex++;
 		}
 	}
 }
