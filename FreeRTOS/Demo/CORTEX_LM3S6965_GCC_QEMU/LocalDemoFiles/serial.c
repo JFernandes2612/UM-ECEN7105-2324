@@ -478,7 +478,7 @@ void interactFunc()
 			break;
 		}
 
-		if (((serialBufferIndex < 3 && (isdigit(c) || c == 0x08 || c == '-')) || (serialBufferIndex == 3 && c == 0x08)) && funcState != DONE)
+		if (((serialBufferIndex < 3 && (isdigit(c) || c == 0x08 || (c == '-' && serialBufferIndex == 0))) || (serialBufferIndex == 3 && c == 0x08)) && funcState != DONE)
 			UARTCharPut(UART0_BASE, c);
 
 		if (c == 0x08 && funcState != DONE)
@@ -493,7 +493,7 @@ void interactFunc()
 			serialBufferIndex--;
 			writeToSerialBuffer(0);
 		}
-		else if (serialBufferIndex < 3 && (isdigit(c) || c == '-') && funcState != DONE)
+		else if (serialBufferIndex < 3 && (isdigit(c) || (c == '-' && serialBufferIndex == 0)) && funcState != DONE)
 		{
 			flash_cursor = 12;
 			writeToSerialBuffer(c);

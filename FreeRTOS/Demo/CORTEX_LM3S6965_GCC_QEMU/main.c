@@ -51,7 +51,7 @@ int main( void )
 	/* Start the tasks defined within this file/specific to this demo. */
 	displayS = xSemaphoreCreateMutex();
 
-	xTaskCreate( clockTask, "SystemClock", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL);
+	xTaskCreate( ClockTask, "SystemClock", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL);
 	xTaskCreate( RefreshDisplayTask, "RefreshDisplay", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL);
 	xTaskCreate( SerialTask, "Serial", STOCK_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL );
 

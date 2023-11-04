@@ -40,22 +40,23 @@ void printMenu()
 	switch (menu)
 	{
 		case SCREEN_TYPE_SELECTION:
-			OSRAM128x64x4StringDraw("Screen Type Mode", 0, 15, 0xF, 1);
+			OSRAM128x64x4StringDraw("Screen Type", 0, 15, 0xF, 1);
 			break;
 		case MOUSE_SELECTION:
-			OSRAM128x64x4StringDraw("Mouse Mode", 0, 15, 0xF, 1);
+			OSRAM128x64x4StringDraw("Mouse", 0, 15, 0xF, 1);
 			break;
 		case WORKERS_SELECTION:
-			OSRAM128x64x4StringDraw("Workers Mode", 0, 15, 0xF, 1);
+			OSRAM128x64x4StringDraw("Workers", 0, 15, 0xF, 1);
 			break;
 		case SNAKE_SELECTION:
 			OSRAM128x64x4StringDraw("Snake Game", 0, 15, 0xF, 1);
 			break;
 		case VIDEO_SELECTION:
-			OSRAM128x64x4StringDraw("Video", 0, 15, 0xF, 1);
+			OSRAM128x64x4StringDraw("Video Player", 0, 15, 0xF, 1);
 			break;
 		case SIN_SELECTION:
-			OSRAM128x64x4StringDraw("Sin Function Plot", 0, 15, 0xF, 1);
+			OSRAM128x64x4StringDraw("Sinusoidal Function", 0, 15, 0xF, 1);
+			OSRAM128x64x4StringDraw("(Sin)", 0, 23, 0xF, 1);
 			break;
 	}
 
@@ -144,7 +145,7 @@ void drawVideo()
 
 void drawFunc()
 {
-	OSRAM128x64x4StringDraw("Sin(Ax) * B + C", 0, 0, 0xF, 1);
+	OSRAM128x64x4StringDraw("sin(Ax) * B + C", 0, 0, 0xF, 1);
 
 	if (funcState == A)
 	{
@@ -188,7 +189,7 @@ void FlashCursorTask( void *pvParameters )
 
 	TickType_t xLastWakeTime;
 
-	const TickType_t xDefaultFrequency = pdMS_TO_TICKS(25);
+	const TickType_t xDefaultFrequency = pdMS_TO_TICKS(50);
 
 	xLastWakeTime = xTaskGetTickCount();
 
@@ -205,7 +206,7 @@ void FlashCursorTask( void *pvParameters )
 				if (flash_cursor == 12)
 					bounce = 0;
 				else
-					flash_cursor += 1;;
+					flash_cursor += 1;
 			}
 			else
 			{
@@ -230,7 +231,7 @@ void stopFlashCursor()
 	vTaskDelete(xHandleFlashCursor);
 }
 
-void clockTask( void *pvParameters )
+void ClockTask( void *pvParameters )
 {
 	( void ) pvParameters;
 
@@ -245,9 +246,13 @@ void clockTask( void *pvParameters )
 		// Wait for the next cycle.
 		xTaskDelayUntil( &xLastWakeTime, xDefaultFrequency );
 
-		if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+		if (state == MENU) {
+			if (xSemaphoreTake(displayS, portMAX_DELAY ) == pdTRUE){
+				menuClock++;
+				xSemaphoreGive(displayS);
+			}
+		} else {
 			menuClock++;
-			xSemaphoreGive(displayS);
 		}
 
 	}

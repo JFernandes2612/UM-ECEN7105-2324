@@ -32,6 +32,6 @@ void stopFlashCursor();
 
 // Clock
 
-void clockTask( void *pvParameters );
+void ClockTask( void *pvParameters );
 
 #endif /* LOCALDEMOFILES_DISPLAY_H_ */
